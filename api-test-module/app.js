@@ -1,14 +1,21 @@
 // Variables
 var createError = require('http-errors');
+var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+
+// Routes
 var indexRouter = require('./routes/index');
-var database, collection;
+var usersRouter = require('./routes/users');
+var registerRouter = require('./routes/registerUser');
+var updateRouter = require('./routes/updateUser');
+var deleteRouter = require('./routes/deleteUser');
+
+// Initial App
+var app = express();
 
 // Constants App
-const express = require("express");
-const BodyParser = require("body-parser");
 const MongoClient = require('mongodb').MongoClient;
 const uri = "mongodb+srv://ivamgf:10106088@cluster0-diple.mongodb.net/test?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useUnifiedTopology: true });
@@ -18,18 +25,21 @@ client.connect(err => {
   client.close();
 });
 
-// Initial app
-var app = express();
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
 app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(BodyParser.json());
-app.use(BodyParser.urlencoded({ extended: true }));
+
 app.use('/', indexRouter);
+app.use('/users', usersRouter);
+app.use('/registerUser', registerRouter);
+app.use('/updateUser', updateRouter);
+app.use('/deleteUser', deleteRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -49,7 +59,7 @@ app.use(function(err, req, res, next) {
 
 // render page
 app.listen(3000, () => {
-  
+  console.log('Loading Api Test Module - Powered By Nodejs + Express');
 });
 
 // exports
